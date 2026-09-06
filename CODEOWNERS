@@ -1,0 +1,5 @@
+# Сработает после апгрейда организации до GitHub Team (нужны required reviewers).
+# До этого — просто список: правки этих путей требуют ревью преподавателя.
+/tests_reference/          @vladefr97
+/.github/                  @vladefr97
+/pyproject.toml            @vladefr97

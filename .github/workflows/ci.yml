@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_VERSION: "0.9.7"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10.0.1
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+
+      - run: uv sync --frozen
+
+      - name: ruff check
+        run: uv run ruff check .
+
+      - name: ruff format --check
+        run: uv run ruff format --check .
+
+      - name: mypy
+        run: uv run mypy tasks
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Эталонные тесты преподавателя тянутся из шаблона по фиксированному тегу,
+      # а не берутся из этого репозитория — правка своей копии не даёт эффекта.
+      - name: checkout reference tests
+        uses: actions/checkout@v7
+        with:
+          repository: polytech-software-engineering-2026/task-01-algorithms
+          ref: reference-v1
+          path: .reference-template
+
+      - name: sync reference tests
+        run: |
+          rm -rf tests_reference
+          mv .reference-template/tests_reference tests_reference
+          rm -rf .reference-template
+
+      - uses: astral-sh/setup-uv@v10.0.1
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+
+      - run: uv sync --frozen
+
+      - name: pytest (свои тесты + эталонные)
+        run: uv run pytest tests tests_reference -v

@@ -1,0 +1,49 @@
+[project]
+name = "task-01-algorithms"
+version = "0.1.0"
+description = "Задание 1: алгоритмы и структуры данных"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+  "pytest>=8.0",
+  "pytest-cov>=5.0",
+  "pytest-timeout>=2.3",
+  "ruff>=0.6",
+  "mypy>=1.11",
+  "pre-commit>=3.8",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+# ruff умеет форматировать python-блоки внутри markdown; task.md — это условия
+# задач, перенесённые как есть, их трогать нельзя.
+extend-exclude = ["*.md"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.12"
+disallow_untyped_defs = true
+no_implicit_optional = true
+strict_optional = true
+ignore_missing_imports = true
+pretty = true
+explicit_package_bases = true
+exclude = "tests_reference/"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+addopts = "-ra"
+timeout = 5
