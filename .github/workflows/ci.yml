@@ -45,7 +45,7 @@ jobs:
       - name: checkout reference tests
         uses: actions/checkout@v7
         with:
-          repository: polytech-software-engineering-2026/task-01-algorithms
+          repository: polytech-software-engineering-2026/task-02-algorithms
           ref: reference-v1
           path: .reference-template
 
