@@ -583,7 +583,7 @@ wheels = [
 ]
 
 [[package]]
-name = "task-01-algorithms"
+name = "task-02-algorithms"
 version = "0.1.0"
 source = { virtual = "." }
 
