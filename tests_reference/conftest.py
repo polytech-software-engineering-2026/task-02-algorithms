@@ -11,10 +11,22 @@ import pytest
 
 
 def import_solution_module(module_path: str) -> ModuleType:
+    file_path = f"{module_path.replace('.', '/')}.py"
     try:
         return importlib.import_module(module_path)
-    except ModuleNotFoundError:
-        pytest.skip(f"{module_path.replace('.', '/')}.py ещё не создан", allow_module_level=True)
+    except ModuleNotFoundError as error:
+        missing_module = error.name
+    # Skip only when the solution file itself is absent. If the file exists but
+    # one of its own imports is broken, the tests must fail, not silently skip.
+    if missing_module == module_path:
+        pytest.skip(f"{file_path} ещё не создан", allow_module_level=True)
+    pytest.fail(
+        f"{file_path} не импортируется: не найден модуль '{missing_module}'. "
+        "Проверьте импорты в начале файла: модули задания импортируются от корня "
+        "репозитория (например, `from tasks.sorts.merge_sort.solution import merge_sort`). "
+        f'Увидеть ошибку локально: uv run python -c "import {module_path}"',
+        pytrace=False,
+    )
 
 
 def import_solution(module_path: str, *names: str):
